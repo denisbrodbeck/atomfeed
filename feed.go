@@ -53,10 +53,12 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 // More specifically the function creates valid atom IDs by feed creation time and a custom specifier.
 //
 // Example
+//
 // Input:  authorityName=example.com creationTime=time.Now() specific=blog
 // Output: tag:example.com,2017-12-14:blog
 //
-// Further discussion: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+// See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+//
 // [rfc4151]: https://tools.ietf.org/html/rfc4151
 func NewFeedID(authorityName string, creationTime time.Time, specific string) *ID {
 	tag := fmt.Sprintf("tag:%s,%s:%s", authorityName, creationTime.Format("2006-01-02"), specific)
@@ -68,10 +70,13 @@ func NewFeedID(authorityName string, creationTime time.Time, specific string) *I
 // More specifically the function creates valid atom IDs by article creation time.
 //
 // Example
+//
 // Input:  authorityName=example.com entryCreationTime=time.Now()
+//
 // Output: tag:example.com,2017-12-14:/archives/20171214083015
 //
-// Further discussion: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+// See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+//
 // [rfc4151]: https://tools.ietf.org/html/rfc4151
 func NewEntryID(authorityName string, entryCreationTime time.Time) *ID {
 	tag := fmt.Sprintf("tag:%s,%s:/archives/%s", authorityName, entryCreationTime.Format("2006-01-02"), entryCreationTime.Format("20060102150405"))
@@ -79,6 +84,7 @@ func NewEntryID(authorityName string, entryCreationTime time.Time) *ID {
 }
 
 // NewContent creates the correct atom:content element depending on type attribute.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.1.3.3
 func NewContent(contentType, source string, value []byte) *Content {
 	if source == "" && (value == nil || len(value) == 0) {

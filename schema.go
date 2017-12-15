@@ -4,6 +4,7 @@ import "encoding/xml"
 
 // Feed is an atom:feed element and is the document (i.e., top-level) element of
 // an Atom Feed Document, acting as a container for metadata and data associated with the feed.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.1.1
 type Feed struct {
 	XMLName     xml.Name       `xml:"feed"`
@@ -26,6 +27,7 @@ type Feed struct {
 
 // Entry is an atom:entry element and represents an individual entry, acting as a
 // container for metadata and data associated with the entry.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.1.2
 type Entry struct {
 	ID          *ID            `xml:"id"`
@@ -44,6 +46,7 @@ type Entry struct {
 }
 
 // Source is an atom:source element.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.11
 type Source struct {
 	ID          *ID            `xml:"id"`
@@ -62,6 +65,7 @@ type Source struct {
 }
 
 // Content is an atom:content element which either contains or links to the content of the entry.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.1.3
 type Content struct {
 	// Type MAY be one of "text", "html", or "xhtml".
@@ -77,6 +81,7 @@ type Content struct {
 }
 
 // TextConstruct contains human-readable text, usually in small quantities.
+//
 // https://tools.ietf.org/html/rfc4287#section-3.1
 type TextConstruct struct {
 	// Type MAY be one of "text", "html", or "xhtml".
@@ -87,6 +92,7 @@ type TextConstruct struct {
 }
 
 // Person is an atom:person element that describes a person, corporation, or similar entity.
+//
 // https://tools.ietf.org/html/rfc4287#section-3.2
 type Person struct {
 	Name  string `xml:"name"`
@@ -96,6 +102,7 @@ type Person struct {
 }
 
 // Date is an atom:date element whose content MUST conform to the "date-time" production in [RFC3339].
+//
 // https://tools.ietf.org/html/rfc4287#section-3.3
 type Date struct {
 	// Value must be a date conforming to RFC3339.
@@ -106,6 +113,7 @@ type Date struct {
 
 // Generator is an atom:generator element.
 // The "atom:generator" element's content identifies the agent used to generate a feed.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.4
 type Generator struct {
 	URI     string `xml:"uri,attr,omitempty"`
@@ -115,6 +123,7 @@ type Generator struct {
 }
 
 // Category is an atom:category element.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.2
 type Category struct {
 	// Term is a mandatory string that identifies the category
@@ -132,8 +141,10 @@ type Category struct {
 
 // Icon is an optional atom:icon element, which is an IRI reference [RFC3987] that
 // identifies an image that provides iconic visual identification for a feed.
+//
 // The image SHOULD have an aspect ratio of 1 (horizontal) to 1 (vertical)
 // and SHOULD be suitable for presentation at a small size.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.5
 type Icon struct {
 	Value string `xml:",chardata"`
@@ -141,9 +152,11 @@ type Icon struct {
 }
 
 // ID is an atom:id element and conveys a permanent, universally unique identifier for an entry or feed.
+//
 // The value of ID must be a valid IRI.
 // A permalink SHOULDN'T be used a an ID.
 // Generate a stable and unique ID with: NewID(authorityName, creationTime)
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.6
 type ID struct {
 	Value string `xml:",chardata"`
@@ -151,6 +164,7 @@ type ID struct {
 }
 
 // Link is an atom:link element that defines a reference from an entry or feed to a Web resource.
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.7
 type Link struct {
 	// Href contains the link's mandatory IRI.
@@ -181,7 +195,9 @@ type Link struct {
 
 // Logo is an atom:logo element, which is n IRI reference [RFC3987] that
 // identifies an image that provides visual identification for a feed.
+//
 // The image SHOULD have an aspect ratio of 2 (horizontal) to 1 (vertical).
+//
 // https://tools.ietf.org/html/rfc4287#section-4.2.8
 type Logo struct {
 	Value string `xml:",chardata"`
@@ -189,6 +205,7 @@ type Logo struct {
 }
 
 // CommonAttributes is an atom:commonattributes element.
+//
 // https://tools.ietf.org/html/rfc4287#section-2
 type CommonAttributes struct {
 	Base string `xml:"xml:base,attr,omitempty"`
