@@ -31,12 +31,12 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 		Subtitle:  &TextConstruct{Value: subtitle},
 		Author:    author,
 		Links: []Link{
-			Link{
+			{
 				Rel:  "alternate",
 				Type: "text/html",
 				Href: baseURL, // https://example.com/
 			},
-			Link{
+			{
 				Rel:  "self",
 				Type: "application/atom+xml",
 				Href: feedURL, // https://example.com/feed.atom
@@ -130,7 +130,7 @@ func NewEntry(id *ID, title, permalink string, author *Person, updated, publishe
 		ID:    id,
 		Title: &TextConstruct{Value: title},
 		Links: []Link{
-			Link{
+			{
 				Rel:  "alternate",
 				Type: "text/html",
 				Href: permalink,

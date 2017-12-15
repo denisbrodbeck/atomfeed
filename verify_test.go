@@ -72,23 +72,23 @@ func Test_checkAuthorsExist(t *testing.T) {
 		},
 		{
 			name:    "not enough authors",
-			args:    args{f: &Feed{Entries: []Entry{Entry{Author: author}, Entry{Author: nil}}}},
+			args:    args{f: &Feed{Entries: []Entry{{Author: author}, {Author: nil}}}},
 			wantErr: true,
 		},
 		{
 			name:    "only feed author",
-			args:    args{f: &Feed{Author: author, Entries: []Entry{Entry{}, Entry{}}}},
+			args:    args{f: &Feed{Author: author, Entries: []Entry{{}, {}}}},
 			wantErr: false,
 		},
 		{
 			name:    "only entry authors",
-			args:    args{f: &Feed{Entries: []Entry{Entry{Author: author}, Entry{Author: author}}}},
+			args:    args{f: &Feed{Entries: []Entry{{Author: author}, {Author: author}}}},
 			wantErr: false,
 		},
 
 		{
 			name:    "mixed",
-			args:    args{f: &Feed{Author: author, Entries: []Entry{Entry{Author: nil}, Entry{Author: author}}}},
+			args:    args{f: &Feed{Author: author, Entries: []Entry{{Author: nil}, {Author: author}}}},
 			wantErr: false,
 		},
 	}
