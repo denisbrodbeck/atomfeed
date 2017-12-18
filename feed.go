@@ -42,46 +42,33 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 				Href: feedURL, // https://example.com/feed.atom
 			},
 		},
-		Updated:   NewDate(&updated),
+		Updated:   NewDate(updated),
 		Entries:   entries,
 		Generator: generator,
 	}
 }
 
 // NewFeedID creates a stable ID for an atom:feed element.
-// The resulting ID follows the 'tag' URI scheme as defined in [rfc4151].
+// The resulting ID follows the 'tag' URI scheme as defined in RFC 4151.
 // More specifically the function creates valid atom IDs by feed creation time and a custom specifier.
 //
-// Example
-//
-// Input:  authorityName=example.com creationTime=time.Now() specific=blog
-// Output: tag:example.com,2017-12-14:blog
-//
-// See: https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
-//
-// See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
-//
-// See: https://tools.ietf.org/html/rfc4151
+// Further info:
+//  https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
+//  http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+//  https://tools.ietf.org/html/rfc4151
 func NewFeedID(authorityName string, creationTime time.Time, specific string) *ID {
 	tag := fmt.Sprintf("tag:%s,%s:%s", authorityName, creationTime.Format("2006-01-02"), specific)
 	return &ID{Value: tag}
 }
 
 // NewEntryID creates a stable ID for an atom:entry element.
-// The resulting ID follows the 'tag' URI scheme as defined in [rfc4151].
+// The resulting ID follows the 'tag' URI scheme as defined in RFC 4151.
 // More specifically the function creates valid atom IDs by article creation time.
 //
-// Example
-//
-// Input:  feedID = tag:example.com,2005:blog entryCreationTime = time.Now()
-//
-// Output: tag:example.com,2005:blog.post-20171214083015
-//
-// See: https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
-//
-// See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
-//
-// See: https://tools.ietf.org/html/rfc4151
+// Further info:
+//  https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
+//  http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
+//  https://tools.ietf.org/html/rfc4151
 func NewEntryID(feedID ID, entryCreationTime time.Time) *ID {
 	tag := fmt.Sprintf("%s.post-%s", feedID.Value, entryCreationTime.Format("20060102150405"))
 	return &ID{Value: tag}
@@ -111,8 +98,8 @@ func NewContent(contentType, source string, value []byte) *Content {
 }
 
 // NewDate returns an atom:date element with valid RFC3339 time data.
-func NewDate(t *time.Time) *Date {
-	if t == nil {
+func NewDate(t time.Time) *Date {
+	if t.IsZero() {
 		return nil
 	}
 	return &Date{Value: t.Format(time.RFC3339)}
@@ -129,7 +116,7 @@ func NewCategory(category string) *Category {
 }
 
 // NewEntry creates a basic atom:entry suitable for e.g. a blog.
-func NewEntry(id *ID, title, permalink string, author *Person, updated, published *time.Time, categories []string, summary, content []byte) *Entry {
+func NewEntry(id *ID, title, permalink string, author *Person, updated, published time.Time, categories []string, summary, content []byte) *Entry {
 	return &Entry{
 		ID:    id,
 		Title: &TextConstruct{Value: title},
