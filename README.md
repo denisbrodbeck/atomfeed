@@ -21,7 +21,7 @@ This package:
 * allows easy creation of valid Atom 1.0 feeds.
 * provides convenience functions to create feeds suitable for most blogs.
 * enables creation of complex atom feeds by usage of low–level structs.
-* checks created feeds for most common issues (missing IDs, titles, timestamps…).
+* checks created feeds for most common issues (missing IDs, titles, time stamps…).
 * has no external dependencies
 
 ## Installation
@@ -120,9 +120,9 @@ There are three requirements for an Atom ID:
 1. The ID must be globally unique, across all Atom feeds, everywhere, for all time.
 1. The ID must never change.
 
-> I can use a permalink, they are unique and don't change, aren't they?
+> I can use permalinks, they are unique and don't change, aren't they?
 
-Well, you *could* use permalinks as Atom IDs, but depending on how your permalinks are constructed, they *could* change. Imagine permalinks, which are automatically constructed from your `base URL` and your post `title`. What happens, if you update the `title` of your post? The permalink to your post **changes** and thus the Atom ID of your entry changes.
+Well, you *could* use permalinks as Atom IDs, but depending on how your permalinks are constructed, they *could* change. Imagine permalinks, which are automatically constructed from your `base URL` and your post's `title`. What happens, if you update the `title` of your post? The permalink to your post **changes** and thus the Atom ID of your entry changes.
 
 > So what do I use instead? UUID? URN?
 
@@ -141,7 +141,7 @@ Example-Post: `tag:example.com,2005:blog.post-20171224083015`
 * start with `tag:`
 * append an *authority name* (the domain you own or an email address): `example.com`
 * append a comma `,`
-* append a date, that signifies, when you had control/ownership over this *authority name*, like `2015` or `2015-02` or `2015-02-24`
+* append a date, that signifies, when you had control/ownership over this *authority name*, like `2005` or `2005-02` or `2005-02-24`
 * append a colon `:`
 * append a specifier (anything you like): `blog`
 * you've got a valid ID for an *atom:feed*: `tag:example.com,2005:blog`
@@ -149,7 +149,7 @@ Example-Post: `tag:example.com,2005:blog.post-20171224083015`
   * append the posts creation time without special characters, turn `2017-12-24 08:30:15` into `20171224083015`
 	* you've got a valid ID for an *atom:entry*: ``tag:example.com,2005:blog.post-20171224083015``
 
-Fur further info check out Mark Pilgrims article on [how to make a good ID in Atom](http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id).
+For further info check out Mark Pilgrims article on [how to make a good ID in Atom](http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id).
 
 ## Credits
 
