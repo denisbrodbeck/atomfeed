@@ -66,8 +66,8 @@ func main() {
 		"Article 1",                              // title
 		baseURL+"/post/1",                        // permalink
 		author,                                   // author of the entry/post
-		&entry1Date,                              // updated date – mandatory
-		&entry1Date,                              // published date – optional
+		entry1Date,                               // updated date – mandatory
+		entry1Date,                               // published date – optional
 		[]string{"tech", "go"},                   // categories
 		[]byte("<em>go go go</em>"),              // summary – optional
 		[]byte("<h1>Header 1</h1>"),              // content
@@ -78,8 +78,8 @@ func main() {
 		"Article 2",                              // title
 		baseURL+"/post/2",                        // permalink
 		coauthor,                                 // author of the entry/post
-		&entry2Date,                              // updated date – mandatory
-		&entry2Date,                              // published date – optional
+		entry2Date,                               // updated date – mandatory
+		entry2Date,                               // published date – optional
 		[]string{"cat", "dog"},                   // categories – optional
 		[]byte("I'm a cat!"),                     // summary – optional
 		[]byte("<h1>Header 2</h1>"),              // content
@@ -147,9 +147,49 @@ Example-Post: `tag:example.com,2005:blog.post-20171224083015`
 * you've got a valid ID for an *atom:feed*: `tag:example.com,2005:blog`
   * append a dot `.`
   * append the posts creation time without special characters, turn `2017-12-24 08:30:15` into `20171224083015`
-	* you've got a valid ID for an *atom:entry*: ``tag:example.com,2005:blog.post-20171224083015``
+  * you've got a valid ID for an *atom:entry*: ``tag:example.com,2005:blog.post-20171224083015``
 
 For further info check out Mark Pilgrims article on [how to make a good ID in Atom](http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id).
+
+## Verification
+
+The Atom 1.0 standard defines several must–have properties of valid atom feeds
+and this package allows the feed author to verify the validity of created feeds and entries.
+
+Most common issues are (verified by this package):
+
+* Missing or invalid `ID` on **atom:feed**
+* Missing or invalid `ID` on **atom:entry**
+* Missing *titles* on **atom:feed** / **atom:entry**
+* Invalid time stamps (missing or not RFC3339 compliant)
+* Missing *author*
+* Invalid *URIs* in elements which require a valid IRI (**atom:icon**)
+* Invalid *content*
+
+```golang
+package main
+
+import (
+	"log"
+	"time"
+	"github.com/denisbrodbeck/atomfeed"
+)
+
+func main() {
+	feed := atomfeed.Feed{
+		ID:      &atomfeed.ID{Value: "tag:example.com,2005-07-18:blog"},
+		Title:   &atomfeed.TextConstruct{Value: "Deep Dive Into Go"},
+		Updated: atomfeed.NewDate(time.Now()),
+		Author:  &atomfeed.Person{Name: "Go Pher"},
+	}
+	// perform sanity checks on created feed
+	if err := feed.Verify(); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+Further checks can be made with the [atom feed validator](https://validator.w3.org/feed/) from W3C. Please do run this validator, if you are constructing a complex feed.
 
 ## Credits
 

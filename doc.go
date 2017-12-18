@@ -10,7 +10,7 @@ Direct usage of low–level structs allows the creation of more complex atom fee
 
 The Atom 1.0 standard defines several must–have properties of valid atom feeds
 and this package allows the feed author to verify the validity of created feeds and entries
-and to check for most common issues (missing IDs, titles, timestamps…).
+and to check for most common issues (missing IDs, titles, time stamps…).
 
 Further validation with the final output of this package can be done with
 the online validator https://validator.w3.org/feed/ from W3C.
