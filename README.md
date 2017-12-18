@@ -106,6 +106,24 @@ func main() {
 }
 ```
 
+## Link
+
+Make your atom feed discoverable by adding a `link` to your html's head:
+
+```html
+<head>
+	…
+	<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="https://example.com/feed.atom" />
+	…
+</head>
+```
+
+Link to your feed from your content:
+
+```html
+<a href="https://example.com/feed.atom" type="application/atom+xml" title="Atom Feed">Subscribe with Atom</a>
+```
+
 ## ID
 
 > So what IDs should I use for my atom feed / entries?
@@ -190,6 +208,13 @@ func main() {
 ```
 
 Further checks can be made with the [atom feed validator](https://validator.w3.org/feed/) from W3C. Please do run this validator, if you are constructing a complex feed.
+
+## What is not included?
+
+[RFC 4287](https://tools.ietf.org/html/rfc4287) defines several very advanced features, which were deliberately not implemented:
+
+* [Securing Atom Documents](https://tools.ietf.org/html/rfc4287#section-5)
+* [Extending Atom](https://tools.ietf.org/html/rfc4287#section-6)
 
 ## Credits
 
