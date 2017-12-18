@@ -24,9 +24,9 @@ func TestNewFeed(t *testing.T) {
 	entry2Date := now.Add(-48 * time.Hour)
 	entry3Date := now.Add(-12 * time.Hour)
 	entries := []Entry{
-		*NewEntry(NewEntryID(authority, entry1Date), "Article 1", baseURL+"/blog/1", author, &entry1Date, &entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
-		*NewEntry(NewEntryID(authority, entry2Date), "Article 2", baseURL+"/blog/2", author, &entry2Date, nil, nil, nil, []byte("<h1>Header 2</h1>")),
-		*NewEntry(NewEntryID(authority, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, &entry3Date, nil, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
+		*NewEntry(NewEntryID(*feedID, entry1Date), "Article 1", baseURL+"/blog/1", author, &entry1Date, &entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
+		*NewEntry(NewEntryID(*feedID, entry2Date), "Article 2", baseURL+"/blog/2", author, &entry2Date, nil, nil, nil, []byte("<h1>Header 2</h1>")),
+		*NewEntry(NewEntryID(*feedID, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, &entry3Date, nil, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
 	}
 
 	feed := NewFeed(feedID, author, title, subtitle, baseURL, feedURL, now, entries)
@@ -59,7 +59,7 @@ const basicBlogFeed = `<?xml version="1.0" encoding="UTF-8"?>
     <uri>https://blog.golang.org/gopher</uri>
   </author>
   <entry>
-    <id>tag:example.com,2012-12-18:/archives/20121218083015</id>
+    <id>tag:example.com,2012-12-21:blog.post-20121218083015</id>
     <title>Article 1</title>
     <link href="https://example.com/blog/1" rel="alternate" type="text/html"></link>
     <published>2012-12-18T08:30:15Z</published>
@@ -74,7 +74,7 @@ const basicBlogFeed = `<?xml version="1.0" encoding="UTF-8"?>
     <content type="html">&lt;h1&gt;Header 1&lt;/h1&gt;</content>
   </entry>
   <entry>
-    <id>tag:example.com,2012-12-19:/archives/20121219083015</id>
+    <id>tag:example.com,2012-12-21:blog.post-20121219083015</id>
     <title>Article 2</title>
     <link href="https://example.com/blog/2" rel="alternate" type="text/html"></link>
     <updated>2012-12-19T08:30:15Z</updated>
@@ -85,7 +85,7 @@ const basicBlogFeed = `<?xml version="1.0" encoding="UTF-8"?>
     <content type="html">&lt;h1&gt;Header 2&lt;/h1&gt;</content>
   </entry>
   <entry>
-    <id>tag:example.com,2012-12-20:/archives/20121220203015</id>
+    <id>tag:example.com,2012-12-21:blog.post-20121220203015</id>
     <title>Article 3</title>
     <link href="https://example.com/blog/3" rel="alternate" type="text/html"></link>
     <updated>2012-12-20T20:30:15Z</updated>
@@ -160,7 +160,7 @@ func TestNewEntryID(t *testing.T) {
 	now := time.Date(2000, time.February, 26, 8, 30, 15, 0, time.UTC)
 
 	type args struct {
-		authorityName     string
+		authorityName     ID
 		entryCreationTime time.Time
 	}
 	tests := []struct {
@@ -172,28 +172,28 @@ func TestNewEntryID(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				authorityName:     "",
+				authorityName:     ID{},
 				entryCreationTime: now,
 			},
-			want:    "tag:,2000-02-26:/archives/20000226083015",
+			want:    ".post-20000226083015",
 			wantErr: false,
 		},
 		{
 			name: "domain",
 			args: args{
-				authorityName:     "example.org",
+				authorityName:     *NewFeedID("example.org", now, "blog"),
 				entryCreationTime: now,
 			},
-			want:    "tag:example.org,2000-02-26:/archives/20000226083015",
+			want:    "tag:example.org,2000-02-26:blog.post-20000226083015",
 			wantErr: false,
 		},
 		{
 			name: "email",
 			args: args{
-				authorityName:     "mail@example.org",
+				authorityName:     *NewFeedID("mail@example.org", now, "blog"),
 				entryCreationTime: now,
 			},
-			want:    "tag:mail@example.org,2000-02-26:/archives/20000226083015",
+			want:    "tag:mail@example.org,2000-02-26:blog.post-20000226083015",
 			wantErr: false,
 		},
 	}

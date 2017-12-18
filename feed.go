@@ -57,9 +57,11 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 // Input:  authorityName=example.com creationTime=time.Now() specific=blog
 // Output: tag:example.com,2017-12-14:blog
 //
+// See: https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
+//
 // See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
 //
-// [rfc4151]: https://tools.ietf.org/html/rfc4151
+// See: https://tools.ietf.org/html/rfc4151
 func NewFeedID(authorityName string, creationTime time.Time, specific string) *ID {
 	tag := fmt.Sprintf("tag:%s,%s:%s", authorityName, creationTime.Format("2006-01-02"), specific)
 	return &ID{Value: tag}
@@ -71,15 +73,17 @@ func NewFeedID(authorityName string, creationTime time.Time, specific string) *I
 //
 // Example
 //
-// Input:  authorityName=example.com entryCreationTime=time.Now()
+// Input:  feedID = tag:example.com,2005:blog entryCreationTime = time.Now()
 //
-// Output: tag:example.com,2017-12-14:/archives/20171214083015
+// Output: tag:example.com,2005:blog.post-20171214083015
+//
+// See: https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
 //
 // See: http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
 //
-// [rfc4151]: https://tools.ietf.org/html/rfc4151
-func NewEntryID(authorityName string, entryCreationTime time.Time) *ID {
-	tag := fmt.Sprintf("tag:%s,%s:/archives/%s", authorityName, entryCreationTime.Format("2006-01-02"), entryCreationTime.Format("20060102150405"))
+// See: https://tools.ietf.org/html/rfc4151
+func NewEntryID(feedID ID, entryCreationTime time.Time) *ID {
+	tag := fmt.Sprintf("%s.post-%s", feedID.Value, entryCreationTime.Format("20060102150405"))
 	return &ID{Value: tag}
 }
 
