@@ -5,13 +5,10 @@ import (
 )
 
 func Test_checkID(t *testing.T) {
-	if err := checkID(nil); err == nil {
-		t.Error("expected an error on nil ID, got none")
-	}
-	if err := checkID(&ID{}); err == nil {
+	if err := checkID(ID{}); err == nil {
 		t.Error("expected an error on empty ID, got none")
 	}
-	if err := checkID(&ID{Value: "example.com"}); err != nil {
+	if err := checkID(ID{Value: "example.com"}); err != nil {
 		t.Error(err)
 	}
 }

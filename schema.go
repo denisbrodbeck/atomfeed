@@ -8,7 +8,7 @@ import "encoding/xml"
 type Feed struct {
 	XMLName     xml.Name       `xml:"feed"`
 	Namespace   string         `xml:"xmlns,attr"` // xmlns="http://www.w3.org/2005/Atom"
-	ID          *ID            `xml:"id"`
+	ID          ID             `xml:"id"`
 	Generator   *Generator     `xml:"generator"`
 	Links       []Link         `xml:"link"`
 	Updated     *Date          `xml:"updated"`
@@ -28,7 +28,7 @@ type Feed struct {
 // container for metadata and data associated with the entry.
 //  https://tools.ietf.org/html/rfc4287#section-4.1.2
 type Entry struct {
-	ID          *ID            `xml:"id"`
+	ID          ID             `xml:"id"`
 	Title       *TextConstruct `xml:"title"`
 	Links       []Link         `xml:"link"`
 	Published   *Date          `xml:"published"`

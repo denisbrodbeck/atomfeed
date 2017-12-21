@@ -18,7 +18,7 @@ func (f *Feed) Encode(w io.Writer) error {
 }
 
 // NewFeed creates a basic atom:feed element suitable for e.g. a blog.
-func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, updated time.Time, entries []Entry) *Feed {
+func NewFeed(id ID, author *Person, title, subtitle, baseURL, feedURL string, updated time.Time, entries []Entry) *Feed {
 	generator := &Generator{
 		URI:     "https://github.com/denisbrodbeck/atomfeed",
 		Version: "1.0",
@@ -48,6 +48,12 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 	}
 }
 
+// NewID creates an atom:id element.
+// The given id parameter is taken as a raw value for ID.
+func NewID(id string) ID {
+	return ID{Value: id}
+}
+
 // NewFeedID creates a stable ID for an atom:feed element.
 // The resulting ID follows the 'tag' URI scheme as defined in RFC 4151.
 // More specifically the function creates valid atom IDs by feed creation time and a custom specifier.
@@ -56,9 +62,9 @@ func NewFeed(id *ID, author *Person, title, subtitle, baseURL, feedURL string, u
 //  https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
 //  http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
 //  https://tools.ietf.org/html/rfc4151
-func NewFeedID(authorityName string, creationTime time.Time, specific string) *ID {
+func NewFeedID(authorityName string, creationTime time.Time, specific string) ID {
 	tag := fmt.Sprintf("tag:%s,%s:%s", authorityName, creationTime.Format("2006-01-02"), specific)
-	return &ID{Value: tag}
+	return ID{Value: tag}
 }
 
 // NewEntryID creates a stable ID for an atom:entry element.
@@ -69,9 +75,9 @@ func NewFeedID(authorityName string, creationTime time.Time, specific string) *I
 //  https://github.com/denisbrodbeck/atomfeed/blob/master/README.md#id
 //  http://web.archive.org/web/20110514113830/http://diveintomark.org/archives/2004/05/28/howto-atom-id
 //  https://tools.ietf.org/html/rfc4151
-func NewEntryID(feedID ID, entryCreationTime time.Time) *ID {
+func NewEntryID(feedID ID, entryCreationTime time.Time) ID {
 	tag := fmt.Sprintf("%s.post-%s", feedID.Value, entryCreationTime.Format("20060102150405"))
-	return &ID{Value: tag}
+	return ID{Value: tag}
 }
 
 // NewContent creates the correct atom:content element depending on type attribute.
@@ -116,7 +122,7 @@ func NewCategory(category string) *Category {
 }
 
 // NewEntry creates a basic atom:entry suitable for e.g. a blog.
-func NewEntry(id *ID, title, permalink string, author *Person, updated, published time.Time, categories []string, summary, content []byte) *Entry {
+func NewEntry(id ID, title, permalink string, author *Person, updated, published time.Time, categories []string, summary, content []byte) *Entry {
 	return &Entry{
 		ID:    id,
 		Title: &TextConstruct{Value: title},

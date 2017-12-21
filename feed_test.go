@@ -3,6 +3,7 @@ package atomfeed
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"log"
 	"reflect"
 	"testing"
@@ -12,7 +13,7 @@ import (
 func TestNewFeed(t *testing.T) {
 	authority := "example.com"
 	now := time.Date(2012, time.December, 21, 8, 30, 15, 0, time.UTC)
-	feedID := NewFeedID(authority, now, "blog")
+	feedID := NewID(fmt.Sprintf("tag:%s,%s:blog", authority, now.Format("2006-01-02")))
 	title := "example.com blog"
 	subtitle := "Get the very latest news from the net."
 	author := NewPerson("Go Pher", "", "https://blog.golang.org/gopher")
@@ -24,9 +25,9 @@ func TestNewFeed(t *testing.T) {
 	entry2Date := now.Add(-48 * time.Hour)
 	entry3Date := now.Add(-12 * time.Hour)
 	entries := []Entry{
-		*NewEntry(NewEntryID(*feedID, entry1Date), "Article 1", baseURL+"/blog/1", author, entry1Date, entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
-		*NewEntry(NewEntryID(*feedID, entry2Date), "Article 2", baseURL+"/blog/2", author, entry2Date, time.Time{}, nil, nil, []byte("<h1>Header 2</h1>")),
-		*NewEntry(NewEntryID(*feedID, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, entry3Date, time.Time{}, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
+		*NewEntry(NewEntryID(feedID, entry1Date), "Article 1", baseURL+"/blog/1", author, entry1Date, entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
+		*NewEntry(NewEntryID(feedID, entry2Date), "Article 2", baseURL+"/blog/2", author, entry2Date, time.Time{}, nil, nil, []byte("<h1>Header 2</h1>")),
+		*NewEntry(NewEntryID(feedID, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, entry3Date, time.Time{}, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
 	}
 
 	feed := NewFeed(feedID, author, title, subtitle, baseURL, feedURL, now, entries)
@@ -181,7 +182,7 @@ func TestNewEntryID(t *testing.T) {
 		{
 			name: "domain",
 			args: args{
-				authorityName:     *NewFeedID("example.org", now, "blog"),
+				authorityName:     NewFeedID("example.org", now, "blog"),
 				entryCreationTime: now,
 			},
 			want:    "tag:example.org,2000-02-26:blog.post-20000226083015",
@@ -190,7 +191,7 @@ func TestNewEntryID(t *testing.T) {
 		{
 			name: "email",
 			args: args{
-				authorityName:     *NewFeedID("mail@example.org", now, "blog"),
+				authorityName:     NewFeedID("mail@example.org", now, "blog"),
 				entryCreationTime: now,
 			},
 			want:    "tag:mail@example.org,2000-02-26:blog.post-20000226083015",

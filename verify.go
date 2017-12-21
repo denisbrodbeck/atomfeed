@@ -130,8 +130,8 @@ func checkURI(uri string) error {
 	return nil
 }
 
-func checkID(id *ID) error {
-	if id == nil || id.Value == "" {
+func checkID(id ID) error {
+	if id.Value == "" {
 		return fmt.Errorf("ID cannot be empty")
 	}
 	return checkURI(id.Value)
