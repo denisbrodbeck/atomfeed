@@ -18,13 +18,13 @@ func (f *Feed) Encode(w io.Writer) error {
 }
 
 // NewFeed creates a basic atom:feed element suitable for e.g. a blog.
-func NewFeed(id ID, author *Person, title, subtitle, baseURL, feedURL string, updated time.Time, entries []Entry) *Feed {
+func NewFeed(id ID, author *Person, title, subtitle, baseURL, feedURL string, updated time.Time, entries []Entry) Feed {
 	generator := &Generator{
 		URI:     "https://github.com/denisbrodbeck/atomfeed",
 		Version: "1.0",
 		Value:   "atomfeed package",
 	}
-	return &Feed{
+	return Feed{
 		Namespace: "http://www.w3.org/2005/Atom",
 		ID:        id,
 		Title:     &TextConstruct{Value: title},
@@ -122,8 +122,8 @@ func NewCategory(category string) *Category {
 }
 
 // NewEntry creates a basic atom:entry suitable for e.g. a blog.
-func NewEntry(id ID, title, permalink string, author *Person, updated, published time.Time, categories []string, summary, content []byte) *Entry {
-	return &Entry{
+func NewEntry(id ID, title, permalink string, author *Person, updated, published time.Time, categories []string, summary, content []byte) Entry {
+	return Entry{
 		ID:    id,
 		Title: &TextConstruct{Value: title},
 		Links: []Link{

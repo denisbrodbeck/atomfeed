@@ -25,9 +25,9 @@ func TestNewFeed(t *testing.T) {
 	entry2Date := now.Add(-48 * time.Hour)
 	entry3Date := now.Add(-12 * time.Hour)
 	entries := []Entry{
-		*NewEntry(NewEntryID(feedID, entry1Date), "Article 1", baseURL+"/blog/1", author, entry1Date, entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
-		*NewEntry(NewEntryID(feedID, entry2Date), "Article 2", baseURL+"/blog/2", author, entry2Date, time.Time{}, nil, nil, []byte("<h1>Header 2</h1>")),
-		*NewEntry(NewEntryID(feedID, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, entry3Date, time.Time{}, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
+		NewEntry(NewEntryID(feedID, entry1Date), "Article 1", baseURL+"/blog/1", author, entry1Date, entry1Date, []string{"tech", "go"}, []byte("<em>summary</em>"), []byte("<h1>Header 1</h1>")),
+		NewEntry(NewEntryID(feedID, entry2Date), "Article 2", baseURL+"/blog/2", author, entry2Date, time.Time{}, nil, nil, []byte("<h1>Header 2</h1>")),
+		NewEntry(NewEntryID(feedID, entry3Date), "Article 3", baseURL+"/blog/3", coauthor, entry3Date, time.Time{}, []string{"dog", "cat"}, []byte("I'm a cat!"), []byte("<h1>Header 3</h1>")),
 	}
 
 	feed := NewFeed(feedID, author, title, subtitle, baseURL, feedURL, now, entries)

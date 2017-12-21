@@ -48,9 +48,7 @@ import (
 
 func main() {
 	// create constant and unique feed ID
-	authority := "example.com"
-	owned := time.Date(2005, time.December, 21, 8, 30, 15, 0, time.UTC)
-	feedID := atomfeed.NewFeedID(authority, owned, "blog")
+	feedID := atomfeed.NewID("tag:example.com,2005-12-21:blog")
 	// set basic feed properties
 	title := "example.com blog"
 	subtitle := "Get the very latest news from the net."
@@ -62,7 +60,7 @@ func main() {
 
 	entry1Date := time.Date(2012, time.October, 21, 8, 30, 15, 0, time.UTC)
 	entry1 := atomfeed.NewEntry(
-		atomfeed.NewEntryID(*feedID, entry1Date), // constant and unique id
+		atomfeed.NewEntryID(feedID, entry1Date), // constant and unique id
 		"Article 1",                              // title
 		baseURL+"/post/1",                        // permalink
 		author,                                   // author of the entry/post
@@ -74,7 +72,7 @@ func main() {
 	)
 	entry2Date := time.Date(2012, time.December, 21, 8, 30, 15, 0, time.UTC)
 	entry2 := atomfeed.NewEntry(
-		atomfeed.NewEntryID(*feedID, entry2Date), // constant and unique id
+		atomfeed.NewEntryID(feedID, entry2Date), // constant and unique id
 		"Article 2",                              // title
 		baseURL+"/post/2",                        // permalink
 		coauthor,                                 // author of the entry/post
@@ -85,8 +83,8 @@ func main() {
 		[]byte("<h1>Header 2</h1>"),              // content
 	)
 	entries := []atomfeed.Entry{
-		*entry1,
-		*entry2,
+		entry1,
+		entry2,
 	}
 
 	feed := atomfeed.NewFeed(feedID, author, title, subtitle, baseURL, feedURL, updated, entries)
@@ -195,7 +193,7 @@ import (
 
 func main() {
 	feed := atomfeed.Feed{
-		ID:      &atomfeed.ID{Value: "tag:example.com,2005-07-18:blog"},
+		ID:      atomfeed.NewID("tag:example.com,2005-07-18:blog"),
 		Title:   &atomfeed.TextConstruct{Value: "Deep Dive Into Go"},
 		Updated: atomfeed.NewDate(time.Now()),
 		Author:  &atomfeed.Person{Name: "Go Pher"},

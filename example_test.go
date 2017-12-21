@@ -47,8 +47,8 @@ func Example() {
 		[]byte("<h1>Header 2</h1>"),             // content
 	)
 	entries := []atomfeed.Entry{
-		*entry1,
-		*entry2,
+		entry1,
+		entry2,
 	}
 
 	feed := atomfeed.NewFeed(feedID, author, title, subtitle, baseURL, feedURL, updated, entries)
