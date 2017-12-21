@@ -138,6 +138,9 @@ func checkID(id *ID) error {
 }
 
 func checkContent(c *Content) error {
+	if c == nil {
+		return nil
+	}
 	if c.Source != "" { // https://tools.ietf.org/html/rfc4287#section-4.1.3.2
 		if err := checkURI(c.Source); err != nil { // MUST be IRI
 			return err
