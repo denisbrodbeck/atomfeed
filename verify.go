@@ -5,42 +5,64 @@ import (
 	"net/mail"
 	"net/url"
 	"strings"
+	"time"
 )
+
+// VerificationError describes problems encountered during feed verification.
+type VerificationError struct {
+	Errors []error
+}
+
+func (e *VerificationError) Error() string {
+	errors := []string{}
+	for _, e := range e.Errors {
+		errors = append(errors, e.Error())
+	}
+	return strings.Join(errors, "\n")
+}
 
 // Verify checks an atom:feed element for most common errors.
 //
 // Common checks are the existence of atom:id, atom:author,
 // atom:title, atom:updated. Any entries will be checked, too.
-func (f *Feed) Verify() error {
+func (f *Feed) Verify() *VerificationError {
+	errors := []error{}
 	if err := checkID(f.ID); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("feed: %v", err))
 	}
 	if err := checkAuthorsExist(f); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("feed: %v", err))
 	}
 	if err := checkPerson(f.Author); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("feed: author: %v", err))
 	}
 	if f.Logo != nil {
 		if err := checkURI(f.Logo.Value); err != nil {
-			return err
+			errors = append(errors, fmt.Errorf("feed: logo: %v", err))
 		}
 	}
 	if f.Icon != nil {
 		if err := checkURI(f.Icon.Value); err != nil {
-			return err
+			errors = append(errors, fmt.Errorf("feed: icon: %v", err))
 		}
 	}
 	if f.Title == nil || f.Title.Value == "" {
-		return fmt.Errorf("atom:feed elements needs a title")
+		errors = append(errors, fmt.Errorf("feed: missing title"))
 	}
 	if f.Updated == nil {
-		return fmt.Errorf("atom:feed elements needs a atom:updated")
+		errors = append(errors, fmt.Errorf("feed: missing updated date"))
+	} else {
+		if err := checkDate(f.Updated.Value); err != nil {
+			errors = append(errors, fmt.Errorf("feed: updated: %v", err))
+		}
 	}
 	for _, entry := range f.Entries {
 		if err := entry.Verify(); err != nil {
-			return err
+			errors = append(errors, fmt.Errorf("errors for entry [%s]\n%v", entry.String(), err))
 		}
+	}
+	if len(errors) > 0 {
+		return &VerificationError{Errors: errors}
 	}
 	return nil
 }
@@ -49,30 +71,45 @@ func (f *Feed) Verify() error {
 //
 // Common checks are the existence of atom:id, atom:author,
 // atom:title, atom:updated, atom:content.
-func (e *Entry) Verify() error {
+func (e *Entry) Verify() *VerificationError {
+	errors := []error{}
 	if err := checkID(e.ID); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("entry: %v", err))
 	}
 	if err := checkContent(e.Content); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("entry: %v", err))
 	}
 	if err := checkPerson(e.Author); err != nil {
-		return err
+		errors = append(errors, fmt.Errorf("entry: author: %v", err))
 	}
 	if e.Title == nil || e.Title.Value == "" {
-		return fmt.Errorf("atom:entry elements need an atom:title element")
+		errors = append(errors, fmt.Errorf("entry: missing title"))
 	}
 	if e.Updated == nil {
-		return fmt.Errorf("atom:entry elements need an atom:updated element")
+		errors = append(errors, fmt.Errorf("entry: missing updated date"))
+	} else {
+		if err := checkDate(e.Updated.Value); err != nil {
+			errors = append(errors, fmt.Errorf("entry: updated: %v", err))
+		}
 	}
-	if e.Content.Source != "" {
-		if e.Summary.Value == "" {
-			return fmt.Errorf("atom:entry elements need an atom:summary element because atom:content element has a src attribute set")
+	if e.Published != nil {
+		if err := checkDate(e.Published.Value); err != nil {
+			errors = append(errors, fmt.Errorf("entry: published: %v", err))
 		}
-	} else if e.Content.base64Encoded {
-		if e.Summary.Value == "" {
-			return fmt.Errorf("atom:entry elements need an atom:summary element because atom:content is base64 encoded")
+	}
+	if e.Content != nil {
+		if e.Content.Source != "" {
+			if e.Summary == nil || e.Summary.Value == "" {
+				errors = append(errors, fmt.Errorf("entry: need a summary because content has src attribute set"))
+			}
+		} else if e.Content.base64Encoded {
+			if e.Summary == nil || e.Summary.Value == "" {
+				errors = append(errors, fmt.Errorf("entry: need a summary because content is base64 encoded"))
+			}
 		}
+	}
+	if len(errors) > 0 {
+		return &VerificationError{Errors: errors}
 	}
 	return nil
 }
@@ -81,7 +118,7 @@ func checkAuthorsExist(f *Feed) error {
 	hasFeedAuthor := f.Author != nil && f.Author.Name != ""
 	if hasFeedAuthor == false {
 		if len(f.Entries) == 0 {
-			return fmt.Errorf("missing author field: an atom:feed must have an atom:author unless all of its atom:entry children have an atom:author")
+			return fmt.Errorf("missing author field: an atom feed must have an author unless all of its entry children have an author")
 		}
 		allEntriesHaveAuthor := true
 		for _, entry := range f.Entries {
@@ -91,7 +128,7 @@ func checkAuthorsExist(f *Feed) error {
 			}
 		}
 		if allEntriesHaveAuthor == false {
-			return fmt.Errorf("missing author field: an atom:feed must have an atom:author unless all of its atom:entry children have an atom:author")
+			return fmt.Errorf("missing author field: an atom feed must have an author unless all of its entry children have an author")
 		}
 	}
 	return nil
@@ -102,7 +139,7 @@ func checkPerson(p *Person) error {
 		return nil
 	}
 	if p.Name == "" {
-		return fmt.Errorf("author name cannot be empty")
+		return fmt.Errorf("name cannot be empty")
 	}
 	if err := checkEmail(p.Email); err != nil {
 		return err
@@ -135,6 +172,17 @@ func checkID(id ID) error {
 		return fmt.Errorf("ID cannot be empty")
 	}
 	return checkURI(id.Value)
+}
+
+func checkDate(date string) error {
+	t, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		return fmt.Errorf("invalid date: %v", err)
+	}
+	if t.IsZero() {
+		return fmt.Errorf("invalid date %q: date is zero", date)
+	}
+	return nil
 }
 
 func checkContent(c *Content) error {

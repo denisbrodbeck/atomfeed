@@ -2,6 +2,7 @@ package atomfeed
 
 import (
 	"testing"
+	"time"
 )
 
 func Test_checkID(t *testing.T) {
@@ -49,6 +50,26 @@ func Test_checkPerson(t *testing.T) {
 	}
 	if err := checkPerson(&Person{Name: "Go", Email: "wrong.com"}); err == nil {
 		t.Error("should fail on invalid email, did not")
+	}
+}
+
+func Test_checkDate(t *testing.T) {
+	tests := []struct {
+		name    string
+		date    string
+		wantErr bool
+	}{
+		{"empty", "", true},
+		{"zero", time.Time{}.Format(time.RFC3339), true},
+		{"notrfc", time.Now().Format(time.UnixDate), true},
+		{"valid", time.Now().Format(time.RFC3339), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := checkDate(tt.date); (err != nil) != tt.wantErr {
+				t.Errorf("checkDate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
 	}
 }
 
