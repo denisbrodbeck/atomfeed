@@ -154,8 +154,23 @@ func Test_checkContent(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "valid content in wrong field",
+			args:    args{&Content{ValueXML: "stuff", Type: "text"}},
+			wantErr: true,
+		},
+		{
 			name:    "invalid content mime type",
 			args:    args{&Content{Value: "", Type: "gif"}},
+			wantErr: true,
+		},
+		{
+			name:    "valid xhtml content",
+			args:    args{&Content{ValueXML: `<div xmlns="http://www.w3.org/1999/xhtml"><p>Developers Developers Developers.</p></div>`, Type: "xhtml"}},
+			wantErr: false,
+		},
+		{
+			name:    "invalid xhtml content field",
+			args:    args{&Content{Value: `<div xmlns="http://www.w3.org/1999/xhtml"><p>Developers Developers Developers.</p></div>`, Type: "xhtml"}},
 			wantErr: true,
 		},
 	}

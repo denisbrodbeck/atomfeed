@@ -252,13 +252,22 @@ func TestNewContent(t *testing.T) {
 			want: &Content{Type: "html", Value: "<h1>Header</h1>"},
 		},
 		{
+			name: "xhtml",
+			args: args{
+				contentType: "xhtml",
+				source:      "",
+				value:       []byte(`<div xmlns="http://www.w3.org/1999/xhtml"><p>Developers Developers Developers.</p></div>`),
+			},
+			want: &Content{Type: "xhtml", ValueXML: `<div xmlns="http://www.w3.org/1999/xhtml"><p>Developers Developers Developers.</p></div>`},
+		},
+		{
 			name: "svg",
 			args: args{
 				contentType: "image/svg+xml",
 				source:      "",
 				value:       []byte(`<svg baseProfile="full" width="300" height="200" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="red"/></svg>`),
 			},
-			want: &Content{Type: "image/svg+xml", Value: `<svg baseProfile="full" width="300" height="200" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="red"/></svg>`},
+			want: &Content{Type: "image/svg+xml", ValueXML: `<svg baseProfile="full" width="300" height="200" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="red"/></svg>`},
 		},
 		{
 			name: "gif",

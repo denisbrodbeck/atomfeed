@@ -87,16 +87,20 @@ func NewContent(contentType, source string, value []byte) *Content {
 	if source == "" && (value == nil || len(value) == 0) {
 		return nil
 	}
-	switch contentType {
-	case "", "text", "html", "xhtml",
-		// https://tools.ietf.org/html/rfc3023#section-3
-		"text/xml", "application/xml", "text/xml-external-parsed-entity",
-		"application/xml-external-parsed-entity", "application/xml-dtd":
-		return &Content{Type: contentType, Source: source, Value: string(value)}
-	}
-	if strings.HasSuffix(strings.ToLower(contentType), "+xml") ||
-		strings.HasSuffix(strings.ToLower(contentType), "/xml") ||
-		strings.HasPrefix(strings.ToLower(contentType), "text/") {
+	switch {
+	case contentType == "xhtml",
+		contentType == "text/xml", // https://tools.ietf.org/html/rfc3023#section-3
+		contentType == "application/xml",
+		contentType == "text/xml-external-parsed-entity",
+		contentType == "application/xml-external-parsed-entity",
+		contentType == "application/xml-dtd",
+		strings.HasSuffix(strings.ToLower(contentType), "+xml"),
+		strings.HasSuffix(strings.ToLower(contentType), "/xml"):
+		return &Content{Type: contentType, Source: source, ValueXML: string(value)}
+	case contentType == "",
+		contentType == "text",
+		contentType == "html",
+		strings.HasPrefix(strings.ToLower(contentType), "text/"):
 		return &Content{Type: contentType, Source: source, Value: string(value)}
 	}
 	// all other types MUST be base64 encoded

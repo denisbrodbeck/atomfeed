@@ -193,7 +193,7 @@ func checkContent(c *Content) error {
 		if err := checkURI(c.Source); err != nil { // MUST be IRI
 			return err
 		}
-		if c.Value != "" { // MUST be empty
+		if c.Value != "" || c.ValueXML != "" { // MUST be empty
 			return fmt.Errorf("invalid content: src attribute is present, therefore content must be empty")
 		}
 		if c.Type != "" { // SHOULD be provided
@@ -203,8 +203,14 @@ func checkContent(c *Content) error {
 		}
 	}
 	switch c.Type {
-	case "", "text", "html", "xhtml":
-		return nil
+	case "", "text", "html":
+		if c.ValueXML != "" {
+			return fmt.Errorf("field %q must be empty when using type %q — use field %q instead", "ValueXML", c.Type, "Value")
+		}
+	case "xhtml":
+		if c.Value != "" {
+			return fmt.Errorf("field %q must be empty when using type %q — use field %q instead", "Value", "xhtml", "ValueXML")
+		}
 	default:
 		// Whatever a media type is, it contains at least one slash
 		if strings.Contains(c.Type, "/") == false {

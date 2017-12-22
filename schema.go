@@ -70,8 +70,9 @@ type Content struct {
 	// Source is an optional attribute, whose value MUST be an IRI reference [RFC3987].
 	// If the "src" attribute is present, atom:content MUST be empty.
 	// https://tools.ietf.org/html/rfc4287#section-4.1.3.2
-	Source string `xml:"src,attr,omitempty"`
-	Value  string `xml:",chardata"`
+	Source   string `xml:"src,attr,omitempty"`
+	Value    string `xml:",chardata"`
+	ValueXML string `xml:",innerxml"`
 	*CommonAttributes
 	base64Encoded bool
 }
