@@ -149,3 +149,35 @@ func termsToCategories(categories []string) []Category {
 	}
 	return cat
 }
+
+func (e *Entry) String() string {
+	title := ""
+	if e.Title != nil {
+		title = e.Title.Value
+	}
+	updated := ""
+	if e.Updated != nil {
+		updated = e.Updated.Value
+	}
+	published := ""
+	if e.Published != nil {
+		published = e.Published.Value
+	}
+	author := ""
+	if e.Author != nil {
+		author = e.Author.Name
+	}
+	categories := []string{}
+	for _, c := range e.Categories {
+		categories = append(categories, c.Term)
+	}
+	return fmt.Sprintf(
+		"ID: %q, Title: %q, Updated: %q, Published: %q, Author: %q, Categories: %q",
+		e.ID.Value,
+		title,
+		updated,
+		published,
+		author,
+		strings.Join(categories, ","),
+	)
+}
